@@ -5,10 +5,6 @@ import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
 
-import org.junit.internal.runners.model.EachTestNotifier;
-
-import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
-
 /**
  * Represents a CircularDoublyLinkedList.
  *
