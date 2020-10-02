@@ -17,18 +17,6 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
   private DLinkedNode head;
   private DLinkedNode tail;
   private int size;
-  /*
-  public interface ListIterator<E> {
-    void add(E e); // Inserts the specified element to the list. (Optional for this assignment)
-    boolean hasNext(); // Returns true if this list iterator has more elements while traversing in the forward direction
-    boolean hasPrevious(); // Returns true if this list iterator has more elements while traversing reverse direction
-    E next(); // Returns the next Element.
-    int nextIndex(); // Returns the index of the next element.
-    E previous(); // Returns the previous Element
-    int previousIndex(); // Returns the index of the previous element.
-    void remove(); // Removes from the list the last element that was returned.
-    void set(E e); // Replaces the last element returned. (Optional for this assignment)
-  }*/
   
   private class DLinkedNode {
     E item;
@@ -72,7 +60,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     @Override
     public E next() {
       if (!hasNext()) {
-        throw new NoSuchElementException();  //not sure the right exception error
+        throw new NoSuchElementException();  //exception error
       }
       lastReturnedNode = nextNode;
       nextNode = nextNode.next; // update nextNode ??
@@ -89,7 +77,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     @Override
     public E previous() {
       if (!hasPrevious()) {
-        throw new NoSuchElementException(); //not sure the right exception error
+        throw new NoSuchElementException(); //exception error
       }
       lastReturnedNode = nextNode;
       nextNode = nextNode.prev;
@@ -120,7 +108,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
           } else if (lastReturnedNode == tail.prev) {
             makeListCirc();
           } else {
-            //update lastReturned.next.prev and lastReturned.prev.next *********************************************
+            //update lastReturned.next.prev and lastReturned.prev.next ****************************
           }
           
         }
