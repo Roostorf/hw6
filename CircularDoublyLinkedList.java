@@ -1,10 +1,13 @@
 package edu.ics211.h06;
 
-//import edu.ics211.h02.Brie;
 import edu.ics211.h04.IList211;
 import java.util.Iterator;
 import java.util.ListIterator;
 import java.util.NoSuchElementException;
+
+import org.junit.internal.runners.model.EachTestNotifier;
+
+import com.sun.org.apache.xalan.internal.xsltc.compiler.Template;
 
 /**
  * Represents a CircularDoublyLinkedList.
@@ -177,7 +180,15 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     // traverse to index *******************************************************************
     // return item at index
     
-    return null;
+    if (index < 0 || index >= size) {
+      throw new IndexOutOfBoundsException(); //Out of Bounds
+    }
+    DLinkedNode temp = head;
+    for (int i = 0; i < index; i++) {
+      temp = temp.next;
+    }
+    return temp.item;
+    
   }
 
   @Override
@@ -188,17 +199,42 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     // remember item
     // set item
     // return item
-    
-    return null;
+    if (index < 0 || index >= size) {
+      throw new IndexOutOfBoundsException(); //Out of Bounds
+    }
+    if (index == 0) {
+      E oldVal = head.item;
+      head.item = element;
+      return oldVal;
+    } else {
+      DLinkedNode temp = head;
+      for (int i = 0; i < index; i++) {
+        temp = temp.next;
+      }
+      E oldVal = temp.item;
+      temp.item = element;
+      return oldVal;
+    }
+  
   }
 
   @Override
   public int indexOf(Object obj) {
+
+    DLinkedNode temp = head;    // temp = head
+    for (int i = 0; i < size; i++) {
+      if (temp.item.equals(obj)) {
+        int index = i;
+        return index;   // return index
+      }
+      temp = temp.next;
+    }
+    return -1;
+  
     // loop from size 0 to size -1
     // if item at index is equal to obj return index
     // update temp
     // return -1
-    return 0;
   }
 
   @Override
@@ -256,27 +292,24 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
 
   @Override
   public E remove(int index) {
-    // check index
-    if (index < 0 || index > size) {
+    if (index < 0 || index >= size) { // check index
       throw new IndexOutOfBoundsException(); //Out of Bounds
     }
-    // traverse to index ***********************************************************************
-    // if index is 0
-    if (index == 0) {
-      //    update head
-      
-      makeListCirc(); //    MakeListCirc
-    }
 
-    // else if index is size - 1
-    //    update tail
-    //    makeListCirc
-    // else
-    //    make list not point to node
-    // decrement size
-    // return temp.item
-    
-    return null;
+    for (int i = 0; i < index; i++) { // traverse to index ********
+      if (index == 0) {         // if index is 0
+        E temp = head.item;   //    update head
+        makeListCirc();         //    MakeListCirc
+      } else if (index == size - 1) { //else if index is size - 1
+        E temp = tail.item;   //    update tail
+        makeListCirc();         //    MakeListCirc    
+      } else {                  // else    
+       // make list not point to node ***************
+      }
+      size--; // decrease size
+      return temp.item;  //  return temp.item
+    }
   }
+  
 
 }
