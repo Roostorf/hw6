@@ -120,7 +120,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
           } else if (lastReturnedNode == tail.prev) {
             makeListCirc();
           } else {
-            //update lastReturned.next.prev and lastReturned.prev.next
+            //update lastReturned.next.prev and lastReturned.prev.next *********************************************
           }
           
         }
@@ -173,31 +173,33 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
   @Override
   public E get(int index) {
     // checkIndex
-    // traverse to index *******************************************************************
-    // return item at index
-    
     if (index < 0 || index >= size) {
       throw new IndexOutOfBoundsException(); //Out of Bounds
     }
     DLinkedNode temp = head;
-    for (int i = 0; i < index; i++) {
+    for (int i = 0; i < index; i++) { // traverse to index 
       temp = temp.next;
     }
-    return temp.item;
+    return temp.item; // return item at index
     
   }
 
   @Override
-  public E set(int index, E element) {
-    
+  public E set(int index, E element) {   
     // check index
-    // traverse to index
-    // remember item
-    // set item
-    // return item
     if (index < 0 || index >= size) {
       throw new IndexOutOfBoundsException(); //Out of Bounds
     }
+    
+    /*  //trying to construct method from teacher comments in class
+    for (int i = 0; i < index; i++) { // traverse to index
+      // remember item
+      // set item
+    }
+    // return item */
+
+
+    //copied from last assignment might not be correct ************************
     if (index == 0) {
       E oldVal = head.item;
       head.item = element;
@@ -218,19 +220,15 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
   public int indexOf(Object obj) {
 
     DLinkedNode temp = head;    // temp = head
-    for (int i = 0; i < size; i++) {
-      if (temp.item.equals(obj)) {
+    for (int i = 0; i < size - 1; i++) {     // loop from size 0 to size -1
+      if (temp.item.equals(obj)) {    // if item at index is equal to obj return index
         int index = i;
         return index;   // return index
       }
-      temp = temp.next;
+      temp = temp.next;     // update temp
     }
     return -1;
-  
-    // loop from size 0 to size -1
-    // if item at index is equal to obj return index
-    // update temp
-    // return -1
+
   }
 
   @Override
@@ -253,7 +251,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     if (head == null || size == 0) {
       DLinkedNode node = new DLinkedNode(element, head, tail);
       head = node;
-      tail = head; // point list to newNode head = newNode, tail = newNode ************************************
+      tail = head; // point list to newNode head = newNode, tail = newNode
       makeListCirc(); // make list circular 
     } else if (index == 0) { // else if index is 0
       DLinkedNode node = new DLinkedNode(element, head, tail);
@@ -291,8 +289,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     if (index < 0 || index >= size) { // check index
       throw new IndexOutOfBoundsException(); //Out of Bounds
     }
-
-    for (int i = 0; i < index; i++) { // traverse to index ********
+    for (int i = 0; i < index; i++) { // traverse to index 
       if (index == 0) {         // if index is 0
         E temp = head.item;   //    update head
         makeListCirc();         //    MakeListCirc
@@ -303,8 +300,8 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
        // make list not point to node ***************
       }
       size--; // decrease size
-      return temp.item;  //  return temp.item
     }
+    return null; //temp.item;  **********************  wont let me return temp.item
   }
   
 
