@@ -79,40 +79,40 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
       if (!hasPrevious()) {
         throw new NoSuchElementException(); //exception error
       }
-      lastReturnedNode = nextNode;
+      lastReturnedNode = nextNode.prev;
       nextNode = nextNode.prev;
-      if (nextIndex > 0) {
-        nextIndex --;
-      } else if (nextIndex == 0) {
-        nextIndex = size - 1;
-      }
+      
+      nextIndex = (nextIndex + size - 1) % size; // circular
       
       return lastReturnedNode.item;
     }
 
     @Override
     public int previousIndex() {
-      return nextIndex - 2;
+      return (nextIndex + size - 1) % size;
     }
 
     @Override
     public void remove() {
       if (lastReturnedNode != null) {
         if (size == 1) {
+          // special case, reset state of list back to original
           head = null;
           tail = null;
+          size = 0;
+        } else if (lastReturnedNode == head) {
+          head = head.next; // update head
+          makeListCirc(); // make the list circular
+        } else if (lastReturnedNode == tail) {
+          tail = tail.prev; // update tail
+          makeListCirc(); // make the list circular
         } else {
-          if (lastReturnedNode == head) {
-            head = head.next;
-            makeListCirc();
-          } else if (lastReturnedNode == tail.prev) {
-            makeListCirc();
-          } else {
-            //update lastReturned.next.prev and lastReturned.prev.next ****************************
-          }
-          
+          // make the list not point to lastReturnedNode
+          lastReturnedNode.next.prev = lastReturnedNode.prev;
+          lastReturnedNode.prev.next = lastReturnedNode.next;
         }
         size--;
+        lastReturnedNode = null;
       }
     }
 
@@ -160,62 +160,32 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
 
   @Override
   public E get(int index) {
-    // checkIndex
-    if (index < 0 || index >= size) {
-      throw new IndexOutOfBoundsException(); //Out of Bounds
-    }
-    DLinkedNode temp = head;
-    for (int i = 0; i < index; i++) { // traverse to index 
-      temp = temp.next;
-    }
+    checkIndex(index); // check index
+    DLinkedNode temp = traverse(index);
     return temp.item; // return item at index
     
   }
 
   @Override
   public E set(int index, E element) {   
-    // check index
-    if (index < 0 || index >= size) {
-      throw new IndexOutOfBoundsException(); //Out of Bounds
-    }
-    
-    /*  //trying to construct method from teacher comments in class
-    for (int i = 0; i < index; i++) { // traverse to index
-      // remember item
-      // set item
-    }
-    // return item */
-
-
-    //copied from last assignment might not be correct ************************
-    if (index == 0) {
-      E oldVal = head.item;
-      head.item = element;
-      return oldVal;
-    } else {
-      DLinkedNode temp = head;
-      for (int i = 0; i < index; i++) {
-        temp = temp.next;
-      }
-      E oldVal = temp.item;
-      temp.item = element;
-      return oldVal;
-    }
-  
+    checkIndex(index); // check index
+    DLinkedNode node = traverse(index);
+    E prevItem = node.item; // remember the previous item
+    node.item = element;
+    return prevItem; // return the remembered previous item
   }
 
   @Override
   public int indexOf(Object obj) {
-
     DLinkedNode temp = head;    // temp = head
     for (int i = 0; i < size - 1; i++) {     // loop from size 0 to size -1
-      if (temp.item.equals(obj)) {    // if item at index is equal to obj return index
+      if (temp.item == obj) {    // if item at index is equal to obj return index
         int index = i;
-        return index;   // return index
+        return i;   // return index
       }
       temp = temp.next;     // update temp
     }
-    return -1;
+    return -1;  //not found
 
   }
 
@@ -233,9 +203,39 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
   @Override
   public void add(int index, E element) {
     // Check index size ok
-    if (index < 0 || index > size) {
-      throw new IndexOutOfBoundsException(); //Out of Bounds
+    checkIndex(index); // check index
+    
+    if (index == 0) {
+      // update head/keep circular
+      DLinkedNode newNode = new DLinkedNode(element, head, tail);
+      if (head != null) {
+        // other elements already exist in the list
+        head.prev = newNode;
+      } else {
+        // first element to add in the list, set tail
+        tail = newNode;
+      }
+      // point list to new node
+      head = newNode;
+      makeListCirc();
+    } else if (index == size) {
+      // Update tail and keep circularity
+      DLinkedNode newNode = new DLinkedNode(element, head, tail);
+      // point list to new node
+      tail.next = newNode;
+      tail = newNode;
+      makeListCirc();
+    } else {
+      // adding a node somewhere in the middle of the list
+      DLinkedNode prevNode = traverse(index - 1);
+      DLinkedNode newNode = new DLinkedNode(element, prevNode.next, prevNode);
+      // point list to new node
+      prevNode.next = newNode;
+      newNode.next.prev = newNode;
     }
+    size++;
+    
+    /*
     if (head == null || size == 0) {
       DLinkedNode node = new DLinkedNode(element, head, tail);
       head = node;
@@ -260,7 +260,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
       node.next = add;
       add.next.prev = add;
     }
-    size++;
+    size++; */ // Old Add Method
   }
 
   /**
@@ -271,25 +271,53 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     head.prev = tail;
     
   }
+  
+  private DLinkedNode traverse(int index) {
+    checkIndex(index); // check index
+    DLinkedNode node = head; // start at the head
+    for (int i = 0; i < index && node != null; i++) {
+      // traverse to index
+      node = node.next;
+    }
+    return node; // return the node at index
+  }
+
+  /**
+  * Creates a New CircularDoublyLinkedList.MyListIterator.
+  * @param index is the index.
+  */
+  private void checkIndex(int index) {
+    if (index < 0 || index > size) {
+      throw new IndexOutOfBoundsException(); //Out of Bounds
+    }
+    
+  }
 
   @Override
   public E remove(int index) {
-    if (index < 0 || index >= size) { // check index
-      throw new IndexOutOfBoundsException(); //Out of Bounds
+    checkIndex(index); // check index
+    DLinkedNode nodeToRemove = traverse(index);
+    if (size == 1) { // special case if size == 1
+      head = null;
+      tail = null;
     }
-    for (int i = 0; i < index; i++) { // traverse to index 
-      if (index == 0) {         // if index is 0
-        E temp = head.item;   //    update head
-        makeListCirc();         //    MakeListCirc
-      } else if (index == size - 1) { //else if index is size - 1
-        E temp = tail.item;   //    update tail
-        makeListCirc();         //    MakeListCirc    
-      } else {                  // else    
-       // make list not point to node ***************
-      }
-      size--; // decrease size
+    if (index == 0) {
+      // update head
+      head = nodeToRemove.next;
+      makeListCirc();
+    } else if (index == size - 1) {
+      // update tail
+      tail = nodeToRemove.prev;
+      makeListCirc();
+    } else {
+      // removing an element somewhere in the middle of the list
+      // have the list not point to nodeToRemove
+      nodeToRemove.next.prev = nodeToRemove.prev;
+      nodeToRemove.prev.next = nodeToRemove.next;
     }
-    return null; //temp.item;  **********************  wont let me return temp.item
+
+    size--; // decrement size
+    return nodeToRemove.item; // return stored item
   }
   
 
