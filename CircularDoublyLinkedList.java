@@ -160,7 +160,9 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
 
   @Override
   public E get(int index) {
-    checkIndex(index); // check index
+    if (index < 0 || index >= size) {
+      throw new IndexOutOfBoundsException(); //Out of Bounds
+    } // check index
     DLinkedNode temp = traverse(index);
     return temp.item; // return item at index
     
@@ -168,7 +170,9 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
 
   @Override
   public E set(int index, E element) {   
-    checkIndex(index); // check index
+    if (index < 0 || index >= size) {
+      throw new IndexOutOfBoundsException(); //Out of Bounds
+    } // check index
     DLinkedNode node = traverse(index);
     E prevItem = node.item; // remember the previous item
     node.item = element;
@@ -202,11 +206,10 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
 
   @Override
   public void add(int index, E element) {
-    // Check index size ok
-    checkIndex(index); // check index
-    
-    if (index == 0) {
-      // update head/keep circular
+    // Check index size
+    checkIndex(index);
+    if (index == 0) { // New add
+      // update head and keep circularity
       DLinkedNode newNode = new DLinkedNode(element, head, tail);
       if (head != null) {
         // other elements already exist in the list
@@ -233,7 +236,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
       prevNode.next = newNode;
       newNode.next.prev = newNode;
     }
-    size++;
+    size++; // increment size
     
     /*
     if (head == null || size == 0) {
@@ -260,7 +263,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
       node.next = add;
       add.next.prev = add;
     }
-    size++; */ // Old Add Method
+    size++; */
   }
 
   /**
@@ -295,7 +298,9 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
 
   @Override
   public E remove(int index) {
-    checkIndex(index); // check index
+    if (index < 0 || index >= size) {
+      throw new IndexOutOfBoundsException(); //Out of Bounds
+    } // check index
     DLinkedNode nodeToRemove = traverse(index);
     if (size == 1) { // special case if size == 1
       head = null;
