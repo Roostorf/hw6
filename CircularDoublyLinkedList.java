@@ -184,7 +184,7 @@ public class CircularDoublyLinkedList<E> implements IList211<E>, Iterable<E> {
     DLinkedNode temp = head;    // temp = head
     for (int i = 0; i < size - 1; i++) {     // loop from size 0 to size -1
       if (temp.item == obj) {    // if item at index is equal to obj return index
-        int index = i;
+        //int index = i;
         return i;   // return index
       }
       temp = temp.next;     // update temp
